@@ -50,7 +50,7 @@ st.markdown("""
     }
     
     .success-box {
-        background-color: transparent;
+        background-color: #1a4a1a;
         padding: 1rem;
         border-radius: 10px;
         margin: 1rem 0;
