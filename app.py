@@ -26,18 +26,18 @@ st.markdown("""
     
     .section-header {
         font-size: 1.5rem;
-        color: #9b59b6;
+        color: #a476cf;
         margin-top: 2rem;
         margin-bottom: 1rem;
-        border-bottom: 2px solid #9b59b6;
+        border-bottom: 2px solid #a476cf;
         padding-bottom: 0.5rem;
     }
     
     .metric-container {
-        background-color: #262730;
+        background-color: #2a2829;
         padding: 1rem;
         border-radius: 10px;
-        border-left: 4px solid #9b59b6;
+        border-left: 4px solid #a476cf;
         margin: 0.5rem 0;
     }
     
@@ -45,7 +45,7 @@ st.markdown("""
         background-color: #4a1a4a;
         padding: 1rem;
         border-radius: 10px;
-        border-left: 4px solid #9b59b6;
+        border-left: 4px solid #a476cf;
         margin: 1rem 0;
     }
     
@@ -66,7 +66,7 @@ st.markdown("""
     }
     
     .subsection-title {
-        color: #c8a2c8;
+        color: #a476cf;
         font-weight: bold;
     }
 </style>
