@@ -182,10 +182,20 @@ with col1:
         })
         st.dataframe(df_disponibilidade, use_container_width=True, hide_index=True)
         
-        # Mostrar receita máxima teórica (sem restrições de inteiros)
-        resultado_continuo = resolver_otimizacao()
-        if resultado_continuo.success:
-            receita_maxima_teorica = -resultado_continuo.fun
+        # Mostrar receita máxima teórica (valores contínuos)
+        # Coeficientes da função objetivo (negativos para maximização)
+        c = -PRECOS
+        # Restrições de desigualdade (Ax <= b)
+        A_ub = CONSUMO_MATRIZ
+        b_ub = DISPONIBILIDADE_INICIAL
+        # Limites das variáveis (x >= 0)
+        bounds = [(0, None) for _ in range(len(PRODUTOS))]
+        # Resolver otimização contínua
+        from scipy.optimize import linprog
+        resultado_teorico = linprog(c, A_ub=A_ub, b_ub=b_ub, bounds=bounds, method='highs')
+        
+        if resultado_teorico.success:
+            receita_maxima_teorica = -resultado_teorico.fun
             st.metric("Receita Máxima Teórica", f"{receita_maxima_teorica:.2f} u.m.")
 
 with col2:
