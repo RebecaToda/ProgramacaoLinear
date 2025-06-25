@@ -196,7 +196,7 @@ with col1:
         
         if resultado_teorico.success:
             receita_maxima_teorica = -resultado_teorico.fun
-            st.metric("Máxima Teórica", f"{receita_maxima_teorica:.2f} u.m.")
+            st.metric("Máxima Teórica", f"{receita_maxima_teorica:.4f} u.m.")
 
 with col2:
     st.markdown('<div class="section-header">Quantidades de Produção</div>', unsafe_allow_html=True)
