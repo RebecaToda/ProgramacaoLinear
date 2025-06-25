@@ -196,16 +196,7 @@ with col1:
         
         if resultado_teorico.success:
             receita_maxima_teorica = -resultado_teorico.fun
-            quantidades_teoricas = resultado_teorico.x
-            st.metric("Máxima Teórica", f"{receita_maxima_teorica:.6f} u.m.")
-            
-            # Mostrar as quantidades teóricas para debug
-            with st.expander("Ver Quantidades Teóricas (valores contínuos)"):
-                df_teorico = pd.DataFrame({
-                    'Produto': PRODUTOS,
-                    'Quantidade Teórica': [f"{q:.4f}" for q in quantidades_teoricas]
-                })
-                st.dataframe(df_teorico, use_container_width=True, hide_index=True)
+            st.metric("Máxima Teórica", f"{receita_maxima_teorica:.2f} u.m.")
 
 with col2:
     st.markdown('<div class="section-header">Quantidades de Produção</div>', unsafe_allow_html=True)
