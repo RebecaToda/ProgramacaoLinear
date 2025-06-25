@@ -186,11 +186,12 @@ with col2:
         quantidade = st.number_input(
             f"Quantidade de {produto}",
             min_value=0,
-            value=st.session_state.quantidades[i],
+            value=int(st.session_state.quantidades[i]),
             step=1,
-            key=f"qty_{i}"
+            key=f"qty_{i}",
+            format="%d"
         )
-        quantidades_novas.append(quantidade)
+        quantidades_novas.append(int(quantidade))
     
     # Atualizar session state
     st.session_state.quantidades = quantidades_novas
@@ -271,19 +272,27 @@ with col6:
         
         st.markdown('<div class="success-box">✅ Solução encontrada com sucesso!</div>', unsafe_allow_html=True)
         
+        # Converter para inteiros (arredondar para baixo para garantir viabilidade)
+        solucao_otima_int = np.floor(solucao_otima).astype(int)
+        receita_otima_int = np.sum(solucao_otima_int * PRECOS)
+        
         # Exibir quantidades ótimas
         df_solucao = pd.DataFrame({
             'Produto': PRODUTOS,
-            'Quantidade Ótima': solucao_otima.round(2),
-            'Receita (u.m.)': (solucao_otima * PRECOS).round(2)
+            'Quantidade Ótima': solucao_otima_int,
+            'Receita (u.m.)': (solucao_otima_int * PRECOS)
         })
         st.dataframe(df_solucao, use_container_width=True, hide_index=True)
         
-        st.metric("Receita Máxima", f"{receita_otima:.2f} u.m.")
+        st.metric("Receita Máxima (Inteiros)", f"{receita_otima_int:.2f} u.m.")
+        
+        # Mostrar diferença entre solução contínua e inteira
+        if receita_otima != receita_otima_int:
+            st.info(f"💡 Diferença por usar números inteiros: -{(receita_otima - receita_otima_int):.2f} u.m.")
         
         # Botão para aplicar solução ótima
         if st.button("🎯 Aplicar Solução Ótima", use_container_width=True):
-            st.session_state.quantidades = solucao_otima.astype(int).tolist()
+            st.session_state.quantidades = solucao_otima_int.tolist()
             st.rerun()
     else:
         st.markdown('<div class="warning-box">❌ Não foi possível encontrar solução ótima!</div>', unsafe_allow_html=True)
@@ -329,16 +338,18 @@ if resultado.success:
     with col9:
         st.markdown("**Configuração Ótima**")
         solucao_otima = resultado.x
+        solucao_otima_int_display = np.floor(solucao_otima).astype(int)
         df_otima = pd.DataFrame({
             'Produto': PRODUTOS,
-            'Quantidade': solucao_otima.round(2),
-            'Receita (u.m.)': (solucao_otima * PRECOS).round(2)
+            'Quantidade': solucao_otima_int_display,
+            'Receita (u.m.)': (solucao_otima_int_display * PRECOS)
         })
         st.dataframe(df_otima, use_container_width=True, hide_index=True)
-        st.metric("Receita Total", f"{(-resultado.fun):.2f} u.m.")
+        receita_otima_int_final = np.sum(solucao_otima_int_display * PRECOS)
+        st.metric("Receita Total", f"{receita_otima_int_final:.2f} u.m.")
         
         # Diferença de receita
-        diferenca = (-resultado.fun) - receita_atual
+        diferenca = receita_otima_int_final - receita_atual
         if diferenca > 0:
             st.metric("Ganho Potencial", f"+{diferenca:.2f} u.m.", delta=f"+{((diferenca/receita_atual)*100):.1f}%" if receita_atual > 0 else None)
 
