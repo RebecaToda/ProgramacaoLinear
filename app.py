@@ -308,25 +308,42 @@ with col7:
         df_sensibilidade = pd.DataFrame({
             'Recurso': MATERIAIS,
             'Consumo Ótimo': consumo_otimo.round(2),
-            'Margem Disponível': margem_recursos.round(2),
-            'Preço Sombra': [abs(p) for p in precos_sombra]
+            'Margem Disponível': margem_recursos.round(2)
         })
         st.dataframe(df_sensibilidade, use_container_width=True, hide_index=True)
-        
-        st.markdown('<div class="info-box">💡 <strong>Preço Sombra:</strong> Valor que a receita aumentaria se tivéssemos uma unidade adicional do recurso.</div>', unsafe_allow_html=True)
 
-# Comparação atual vs ótimo
-if resultado.success:
-    st.markdown('<div class="section-header">📈 Comparação: Atual vs Ótimo</div>', unsafe_allow_html=True)
+def resolver_otimizacao_recomendada():
+    """Resolve otimização com produção mínima de 25 unidades por produto"""
+    # Coeficientes da função objetivo (negativos para maximização)
+    c = -PRECOS
     
-    col8, col9 = st.columns(2)
+    # Restrições de desigualdade (Ax <= b) - recursos
+    A_ub = CONSUMO_MATRIZ
+    b_ub = DISPONIBILIDADE_INICIAL
+    
+    # Restrições de igualdade para produção mínima (x >= 25)
+    bounds = [(25, None) for _ in range(len(PRODUTOS))]
+    
+    # Resolver
+    resultado = linprog(c, A_ub=A_ub, b_ub=b_ub, bounds=bounds, method='highs')
+    
+    return resultado
+
+# Comparação atual vs ótimo vs recomendado
+if resultado.success:
+    st.markdown('<div class="section-header">📈 Comparação: Atual vs Ótimo vs Recomendado</div>', unsafe_allow_html=True)
+    
+    # Resolver configuração recomendada
+    resultado_recomendado = resolver_otimizacao_recomendada()
+    
+    col8, col9, col10 = st.columns(3)
     
     with col8:
         st.markdown("**Configuração Atual**")
         df_atual = pd.DataFrame({
             'Produto': PRODUTOS,
             'Quantidade': quantidades,
-            'Receita (u.m.)': (quantidades * PRECOS).round(2)
+            'Receita (u.m.)': (quantidades * PRECOS)
         })
         st.dataframe(df_atual, use_container_width=True, hide_index=True)
         st.metric("Receita Total", f"{receita_atual:.2f} u.m.")
@@ -348,6 +365,28 @@ if resultado.success:
         diferenca = receita_otima_int_final - receita_atual
         if diferenca > 0:
             st.metric("Ganho Potencial", f"+{diferenca:.2f} u.m.", delta=f"+{((diferenca/receita_atual)*100):.1f}%" if receita_atual > 0 else None)
+    
+    with col10:
+        st.markdown("**Configuração Recomendada**")
+        if resultado_recomendado.success:
+            solucao_recomendada = resultado_recomendado.x
+            solucao_recomendada_int = np.floor(solucao_recomendada).astype(int)
+            df_recomendada = pd.DataFrame({
+                'Produto': PRODUTOS,
+                'Quantidade': solucao_recomendada_int,
+                'Receita (u.m.)': (solucao_recomendada_int * PRECOS)
+            })
+            st.dataframe(df_recomendada, use_container_width=True, hide_index=True)
+            receita_recomendada = np.sum(solucao_recomendada_int * PRECOS)
+            st.metric("Receita Total", f"{receita_recomendada:.2f} u.m.")
+            
+            # Botão para aplicar configuração recomendada
+            if st.button("💼 Aplicar Configuração Recomendada", use_container_width=True):
+                st.session_state.quantidades = solucao_recomendada_int.tolist()
+                st.rerun()
+        else:
+            st.markdown('<div class="warning-box">❌ Não é possível produzir 25+ de cada produto com os recursos disponíveis!</div>', unsafe_allow_html=True)
+            st.write(f"Motivo: {resultado_recomendado.message}")
 
 # Footer
 st.markdown("---")
