@@ -54,7 +54,7 @@ st.markdown("""
         padding: 1rem;
         border-radius: 10px;
         margin: 1rem 0;
-        color: #44ff44;
+        color: #bfffcf;
     }
     
     .info-box {
