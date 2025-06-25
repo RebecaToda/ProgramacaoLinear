@@ -64,6 +64,11 @@ st.markdown("""
         border-left: 4px solid #4444ff;
         margin: 1rem 0;
     }
+    
+    .subsection-title {
+        color: #c8a2c8;
+        font-weight: bold;
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -122,7 +127,7 @@ with col1:
             st.rerun()
     
     # Exibir matriz de consumo fixa
-    st.markdown("**Matriz de Consumo de Materiais (Fixa)**")
+    st.markdown('<p class="subsection-title">Matriz de Consumo de Materiais (Fixa)</p>', unsafe_allow_html=True)
     df_consumo = pd.DataFrame(
         CONSUMO_MATRIZ,
         index=MATERIAIS,
@@ -132,7 +137,7 @@ with col1:
     st.dataframe(df_consumo, use_container_width=True)
     
     # Preços de venda - editáveis quando em modo de edição
-    st.markdown("**Preços de Venda**")
+    st.markdown('<p class="subsection-title">Preços de Venda</p>', unsafe_allow_html=True)
     if st.session_state.modo_edicao:
         st.markdown("*Editando preços de venda:*")
         precos_temp = []
@@ -155,7 +160,7 @@ with col1:
         st.dataframe(df_precos, use_container_width=True, hide_index=True)
     
     # Disponibilidade de recursos - editável quando em modo de edição
-    st.markdown("**Disponibilidade de Recursos**")
+    st.markdown('<p class="subsection-title">Disponibilidade de Recursos</p>', unsafe_allow_html=True)
     if st.session_state.modo_edicao:
         st.markdown("*Editando disponibilidade de recursos:*")
         disponibilidade_temp = []
@@ -209,7 +214,7 @@ receita_atual = np.sum(PRECOS * quantidades)
 col3, col4 = st.columns([2, 1])
 
 with col3:
-    st.markdown("**Análise de Consumo de Recursos**")
+    st.markdown('<p class="subsection-title">Análise de Consumo de Recursos</p>', unsafe_allow_html=True)
     
     # Criar DataFrame para análise de consumo
     status_recursos = []
@@ -228,7 +233,7 @@ with col3:
     st.dataframe(df_analise, use_container_width=True, hide_index=True)
 
 with col4:
-    st.markdown("**Resumo Financeiro**")
+    st.markdown('<p class="subsection-title">Resumo Financeiro</p>', unsafe_allow_html=True)
     st.metric("Receita Atual", f"{receita_atual:.2f} u.m.", delta=None)
     
     # Verificar violações
@@ -264,7 +269,7 @@ resultado = resolver_otimizacao()
 col6, col7 = st.columns(2)
 
 with col6:
-    st.markdown("**Solução Ótima**")
+    st.markdown('<p class="subsection-title">Solução Ótima</p>', unsafe_allow_html=True)
     
     if resultado.success:
         solucao_otima = resultado.x
@@ -293,7 +298,7 @@ with col6:
         st.write(f"Motivo: {resultado.message}")
 
 with col7:
-    st.markdown("**Análise de Sensibilidade**")
+    st.markdown('<p class="subsection-title">Análise de Sensibilidade</p>', unsafe_allow_html=True)
     
     if resultado.success:
         # Consumo com solução ótima
