@@ -284,11 +284,7 @@ with col6:
         })
         st.dataframe(df_solucao, use_container_width=True, hide_index=True)
         
-        st.metric("Receita Máxima (Inteiros)", f"{receita_otima_int:.2f} u.m.")
-        
-        # Mostrar diferença entre solução contínua e inteira
-        if receita_otima != receita_otima_int:
-            st.info(f"💡 Diferença por usar números inteiros: -{(receita_otima - receita_otima_int):.2f} u.m.")
+        st.metric("Receita Máxima", f"{receita_otima_int:.2f} u.m.")
         
         # Botão para aplicar solução ótima
         if st.button("🎯 Aplicar Solução Ótima", use_container_width=True):
