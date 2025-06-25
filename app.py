@@ -313,42 +313,19 @@ with col7:
         st.markdown('<div class="success-box">✅ Solução encontrada com sucesso!</div>', unsafe_allow_html=True)
 
 def resolver_otimizacao_recomendada():
-    """Resolve otimização com produção mínima de 15% do máximo individual por produto"""
-    # Calcular o máximo que seria possível produzir de cada produto isoladamente
-    maximos_individuais = []
-    
-    for i in range(len(PRODUTOS)):
-        # Para cada produto, calcular o máximo possível considerando todas as restrições
-        consumo_produto = CONSUMO_MATRIZ[:, i]  # Consumo do produto i
-        
-        # Máximo baseado em cada recurso
-        maximos_por_recurso = []
-        for j in range(len(MATERIAIS)):
-            if consumo_produto[j] > 0:
-                maximo_recurso = DISPONIBILIDADE_INICIAL[j] // consumo_produto[j]
-                maximos_por_recurso.append(maximo_recurso)
-        
-        # O máximo real é limitado pelo recurso mais restritivo
-        if maximos_por_recurso:
-            maximo_individual = min(maximos_por_recurso)
-        else:
-            maximo_individual = 0
-            
-        maximos_individuais.append(maximo_individual)
-    
-    # Calcular 15% de cada máximo individual como mínimo
-    minimos_15_pct = []
-    for maximo in maximos_individuais:
-        minimo = max(1, int(maximo * 0.15))  # Pelo menos 1 unidade
-        minimos_15_pct.append(minimo)
-    
-    # Resolver otimização com esses mínimos
+    """Resolve otimização com produção mínima de 25 unidades por produto"""
+    # Coeficientes da função objetivo (negativos para maximização)
     c = -PRECOS
+    
+    # Restrições de desigualdade (Ax <= b) - recursos
     A_ub = CONSUMO_MATRIZ
     b_ub = DISPONIBILIDADE_INICIAL
-    bounds_com_minimo = [(minimos_15_pct[i], None) for i in range(len(PRODUTOS))]
     
-    resultado = linprog(c, A_ub=A_ub, b_ub=b_ub, bounds=bounds_com_minimo, method='highs')
+    # Restrições de igualdade para produção mínima (x >= 25)
+    bounds = [(25, None) for _ in range(len(PRODUTOS))]
+    
+    # Resolver
+    resultado = linprog(c, A_ub=A_ub, b_ub=b_ub, bounds=bounds, method='highs')
     
     return resultado
 
@@ -408,7 +385,7 @@ if resultado.success:
                 st.session_state.quantidades = solucao_recomendada_int.tolist()
                 st.rerun()
         else:
-            st.markdown('<div class="warning-box">❌ Não é possível produzir com a configuração recomendada!</div>', unsafe_allow_html=True)
+            st.markdown('<div class="warning-box">❌ Não é possível produzir 25+ de cada produto com os recursos disponíveis!</div>', unsafe_allow_html=True)
             st.write(f"Motivo: {resultado_recomendado.message}")
 
 # Footer
