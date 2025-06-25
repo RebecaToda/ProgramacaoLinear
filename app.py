@@ -68,7 +68,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # Título principal
-st.markdown('<div class="main-header">🏭 Sistema de Otimização de Produção</div>', unsafe_allow_html=True)
+st.markdown('<div class="main-header">Sistema de Otimização de Produção</div>', unsafe_allow_html=True)
 st.markdown('<div style="text-align: center; color: #cccccc; margin-bottom: 3rem;">Fábrica de Móveis - Programação Linear</div>', unsafe_allow_html=True)
 
 # Dados fixos do problema
@@ -109,15 +109,15 @@ PRECOS = st.session_state.precos
 col1, col2 = st.columns([1, 1])
 
 with col1:
-    st.markdown('<div class="section-header">📋 Entrada de Dados</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-header">Entrada de Dados</div>', unsafe_allow_html=True)
     
     # Botão para alternar modo de edição
     if not st.session_state.modo_edicao:
-        if st.button("⚙️ Editar Parâmetros", use_container_width=True):
+        if st.button("Editar Parâmetros", use_container_width=True):
             st.session_state.modo_edicao = True
             st.rerun()
     else:
-        if st.button("✅ Confirmar Alterações", use_container_width=True):
+        if st.button("Confirmar Alterações", use_container_width=True):
             st.session_state.modo_edicao = False
             st.rerun()
     
@@ -178,7 +178,7 @@ with col1:
         st.dataframe(df_disponibilidade, use_container_width=True, hide_index=True)
 
 with col2:
-    st.markdown('<div class="section-header">🔧 Quantidades de Produção</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-header">Quantidades de Produção</div>', unsafe_allow_html=True)
     
     # Inputs para quantidades de produtos
     quantidades_novas = []
@@ -198,7 +198,7 @@ with col2:
     quantidades = np.array(quantidades_novas)
 
 # Cálculos
-st.markdown('<div class="section-header">📊 Análise de Consumo</div>', unsafe_allow_html=True)
+st.markdown('<div class="section-header">Análise de Consumo</div>', unsafe_allow_html=True)
 
 # Calcular consumo total
 consumo_total = CONSUMO_MATRIZ @ quantidades
@@ -215,7 +215,7 @@ with col3:
     status_recursos = []
     for i, material in enumerate(MATERIAIS):
         restante = disponibilidade_restante[i]
-        status = "⚠️ Excedido" if restante < 0 else "✅ OK"
+        status = "Excedido" if restante < 0 else "OK"
         status_recursos.append(status)
     
     df_analise = pd.DataFrame({
@@ -234,12 +234,12 @@ with col4:
     # Verificar violações
     violacoes = np.sum(consumo_total > DISPONIBILIDADE_INICIAL)
     if violacoes > 0:
-        st.markdown(f'<div class="warning-box">⚠️ {violacoes} restrição(ões) violada(s)!</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="warning-box">{violacoes} restrição(ões) violada(s)!</div>', unsafe_allow_html=True)
     else:
-        st.markdown('<div class="success-box">✅ Todas as restrições respeitadas!</div>', unsafe_allow_html=True)
+        st.markdown('<div class="success-box">Todas as restrições respeitadas!</div>', unsafe_allow_html=True)
 
 # Otimização Linear
-st.markdown('<div class="section-header">🎯 Otimização Linear</div>', unsafe_allow_html=True)
+st.markdown('<div class="section-header">Otimização Linear</div>', unsafe_allow_html=True)
 
 def resolver_otimizacao():
     """Resolve o problema de programação linear para maximizar receita"""
@@ -285,11 +285,11 @@ with col6:
         st.metric("Receita Máxima", f"{receita_otima_int:.2f} u.m.")
         
         # Botão para aplicar solução ótima
-        if st.button("🎯 Aplicar Solução Ótima", use_container_width=True):
+        if st.button("Aplicar Solução Ótima", use_container_width=True):
             st.session_state.quantidades = solucao_otima_int.tolist()
             st.rerun()
     else:
-        st.markdown('<div class="warning-box">❌ Não foi possível encontrar solução ótima!</div>', unsafe_allow_html=True)
+        st.markdown('<div class="warning-box">Não foi possível encontrar solução ótima!</div>', unsafe_allow_html=True)
         st.write(f"Motivo: {resultado.message}")
 
 with col7:
@@ -310,7 +310,7 @@ with col7:
         })
         st.dataframe(df_sensibilidade, use_container_width=True, hide_index=True)
         
-        st.markdown('<div class="success-box">✅ Solução encontrada com sucesso!</div>', unsafe_allow_html=True)
+        st.markdown('<div class="success-box">Solução encontrada com sucesso!</div>', unsafe_allow_html=True)
 
 def resolver_otimizacao_recomendada():
     """Resolve otimização com produção mínima de 25 unidades por produto"""
@@ -331,7 +331,7 @@ def resolver_otimizacao_recomendada():
 
 # Comparação atual vs ótimo vs recomendado
 if resultado.success:
-    st.markdown('<div class="section-header">📈 Comparação: Atual vs Ótimo vs Recomendado</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-header">Comparação: Atual vs Ótimo vs Recomendado</div>', unsafe_allow_html=True)
     
     # Resolver configuração recomendada
     resultado_recomendado = resolver_otimizacao_recomendada()
@@ -381,18 +381,18 @@ if resultado.success:
             st.metric("Receita Total", f"{receita_recomendada:.2f} u.m.")
             
             # Botão para aplicar configuração recomendada
-            if st.button("💼 Aplicar Configuração Recomendada", use_container_width=True):
+            if st.button("Aplicar Configuração Recomendada", use_container_width=True):
                 st.session_state.quantidades = solucao_recomendada_int.tolist()
                 st.rerun()
         else:
-            st.markdown('<div class="warning-box">❌ Não é possível produzir 25+ de cada produto com os recursos disponíveis!</div>', unsafe_allow_html=True)
+            st.markdown('<div class="warning-box">Não é possível produzir 25+ de cada produto com os recursos disponíveis!</div>', unsafe_allow_html=True)
             st.write(f"Motivo: {resultado_recomendado.message}")
 
 # Footer
 st.markdown("---")
 st.markdown(
     '<div style="text-align: center; color: #888888; margin-top: 2rem;">'
-    '🏭 Sistema de Otimização de Produção - Programação Linear<br>'
+    'Sistema de Otimização de Produção - Programação Linear<br>'
     'Desenvolvido por FATEC Ourinhos'
     '</div>', 
     unsafe_allow_html=True
