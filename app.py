@@ -50,11 +50,11 @@ st.markdown("""
     }
     
     .success-box {
-        background-color: #1a4a1a;
+        background-color: transparent;
         padding: 1rem;
         border-radius: 10px;
-        border-left: 4px solid #44ff44;
         margin: 1rem 0;
+        color: #44ff44;
     }
     
     .info-box {
