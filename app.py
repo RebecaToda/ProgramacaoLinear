@@ -181,6 +181,12 @@ with col1:
             'Disponibilidade (metros)': DISPONIBILIDADE_INICIAL
         })
         st.dataframe(df_disponibilidade, use_container_width=True, hide_index=True)
+        
+        # Mostrar receita máxima teórica (sem restrições de inteiros)
+        resultado_continuo = resolver_otimizacao()
+        if resultado_continuo.success:
+            receita_maxima_teorica = -resultado_continuo.fun
+            st.metric("Receita Máxima Teórica", f"{receita_maxima_teorica:.2f} u.m.")
 
 with col2:
     st.markdown('<div class="section-header">Quantidades de Produção</div>', unsafe_allow_html=True)
