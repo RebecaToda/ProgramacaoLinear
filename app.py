@@ -313,19 +313,26 @@ with col7:
         st.markdown('<div class="success-box">✅ Solução encontrada com sucesso!</div>', unsafe_allow_html=True)
 
 def resolver_otimizacao_recomendada():
-    """Resolve otimização com produção mínima de 25 unidades por produto"""
-    # Coeficientes da função objetivo (negativos para maximização)
+    """Resolve otimização com produção mínima de 15% do máximo possível por produto"""
+    # Primeiro, calcular a solução ótima sem restrições mínimas
     c = -PRECOS
-    
-    # Restrições de desigualdade (Ax <= b) - recursos
     A_ub = CONSUMO_MATRIZ
     b_ub = DISPONIBILIDADE_INICIAL
+    bounds_sem_minimo = [(0, None) for _ in range(len(PRODUTOS))]
     
-    # Restrições de igualdade para produção mínima (x >= 25)
-    bounds = [(25, None) for _ in range(len(PRODUTOS))]
+    resultado_max = linprog(c, A_ub=A_ub, b_ub=b_ub, bounds=bounds_sem_minimo, method='highs')
     
-    # Resolver
-    resultado = linprog(c, A_ub=A_ub, b_ub=b_ub, bounds=bounds, method='highs')
+    if not resultado_max.success:
+        return resultado_max
+    
+    # Calcular 15% da solução ótima como mínimo
+    solucao_max = np.floor(resultado_max.x).astype(int)
+    minimo_15_pct = np.maximum(1, np.floor(solucao_max * 0.15).astype(int))
+    
+    # Resolver com restrições mínimas de 15%
+    bounds_com_minimo = [(int(minimo_15_pct[i]), None) for i in range(len(PRODUTOS))]
+    
+    resultado = linprog(c, A_ub=A_ub, b_ub=b_ub, bounds=bounds_com_minimo, method='highs')
     
     return resultado
 
@@ -385,7 +392,7 @@ if resultado.success:
                 st.session_state.quantidades = solucao_recomendada_int.tolist()
                 st.rerun()
         else:
-            st.markdown('<div class="warning-box">❌ Não é possível produzir 25+ de cada produto com os recursos disponíveis!</div>', unsafe_allow_html=True)
+            st.markdown('<div class="warning-box">❌ Não é possível produzir com a configuração recomendada!</div>', unsafe_allow_html=True)
             st.write(f"Motivo: {resultado_recomendado.message}")
 
 # Footer
