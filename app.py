@@ -270,8 +270,6 @@ with col6:
         solucao_otima = resultado.x
         receita_otima = -resultado.fun
         
-        st.markdown('<div class="success-box">✅ Solução encontrada com sucesso!</div>', unsafe_allow_html=True)
-        
         # Converter para inteiros (arredondar para baixo para garantir viabilidade)
         solucao_otima_int = np.floor(solucao_otima).astype(int)
         receita_otima_int = np.sum(solucao_otima_int * PRECOS)
@@ -311,6 +309,8 @@ with col7:
             'Margem Disponível': margem_recursos.round(2)
         })
         st.dataframe(df_sensibilidade, use_container_width=True, hide_index=True)
+        
+        st.markdown('<div class="success-box">✅ Solução encontrada com sucesso!</div>', unsafe_allow_html=True)
 
 def resolver_otimizacao_recomendada():
     """Resolve otimização com produção mínima de 25 unidades por produto"""
