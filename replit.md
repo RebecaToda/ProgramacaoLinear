@@ -83,6 +83,13 @@ This is a Streamlit-based web application for production optimization in a furni
 - **System Packages**: Includes necessary system libraries for numerical computing
 - **Python Modules**: Managed through pyproject.toml with uv lock file
 
+## Recent Changes
+- June 25, 2025: Sistema de otimização completo implementado
+- Máxima Teórica configurada para usar valores contínuos (permite frações)
+- Interface totalmente em português brasileiro
+- Tema lilás (#a476cf) com fundo escuro (#212021) aplicado
+- Sistema de edição de parâmetros funcionando corretamente
+
 ## Changelog
 - June 25, 2025. Initial setup
 
