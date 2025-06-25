@@ -26,10 +26,10 @@ st.markdown("""
     
     .section-header {
         font-size: 1.5rem;
-        color: #ff6b6b;
+        color: #9b59b6;
         margin-top: 2rem;
         margin-bottom: 1rem;
-        border-bottom: 2px solid #ff6b6b;
+        border-bottom: 2px solid #9b59b6;
         padding-bottom: 0.5rem;
     }
     
@@ -37,15 +37,15 @@ st.markdown("""
         background-color: #262730;
         padding: 1rem;
         border-radius: 10px;
-        border-left: 4px solid #ff6b6b;
+        border-left: 4px solid #9b59b6;
         margin: 0.5rem 0;
     }
     
     .warning-box {
-        background-color: #4a1a1a;
+        background-color: #4a1a4a;
         padding: 1rem;
         border-radius: 10px;
-        border-left: 4px solid #ff4444;
+        border-left: 4px solid #9b59b6;
         margin: 1rem 0;
     }
     
