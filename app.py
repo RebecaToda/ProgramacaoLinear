@@ -116,12 +116,11 @@ with col1:
     st.dataframe(df_precos, use_container_width=True, hide_index=True)
     
     st.markdown("**Disponibilidade de Recursos**")
-    for i, material in enumerate(MATERIAIS):
-        st.metric(
-            label=f"{material}",
-            value=f"{DISPONIBILIDADE_INICIAL[i]} metros",
-            delta=None
-        )
+    df_disponibilidade = pd.DataFrame({
+        'Recurso': MATERIAIS,
+        'Disponibilidade (metros)': DISPONIBILIDADE_INICIAL
+    })
+    st.dataframe(df_disponibilidade, use_container_width=True, hide_index=True)
 
 with col2:
     st.markdown('<div class="section-header">🔧 Quantidades de Produção</div>', unsafe_allow_html=True)
@@ -150,31 +149,29 @@ consumo_total = CONSUMO_MATRIZ @ quantidades
 disponibilidade_restante = DISPONIBILIDADE_INICIAL - consumo_total
 receita_atual = np.sum(PRECOS * quantidades)
 
-# Exibir resultados em colunas
-col3, col4, col5 = st.columns(3)
+# Exibir resultados em tabela
+col3, col4 = st.columns([2, 1])
 
 with col3:
-    st.markdown("**Consumo Calculado**")
-    for i, material in enumerate(MATERIAIS):
-        color = "🔴" if consumo_total[i] > DISPONIBILIDADE_INICIAL[i] else "🟢"
-        st.metric(
-            label=f"{color} {material}",
-            value=f"{consumo_total[i]} metros",
-            delta=f"{consumo_total[i] - DISPONIBILIDADE_INICIAL[i]} metros" if consumo_total[i] > DISPONIBILIDADE_INICIAL[i] else None
-        )
-
-with col4:
-    st.markdown("**Disponibilidade Restante**")
+    st.markdown("**Análise de Consumo de Recursos**")
+    
+    # Criar DataFrame para análise de consumo
+    status_recursos = []
     for i, material in enumerate(MATERIAIS):
         restante = disponibilidade_restante[i]
-        color = "🔴" if restante < 0 else "🟢"
-        st.metric(
-            label=f"{color} {material}",
-            value=f"{restante} metros",
-            delta=None
-        )
+        status = "⚠️ Excedido" if restante < 0 else "✅ OK"
+        status_recursos.append(status)
+    
+    df_analise = pd.DataFrame({
+        'Recurso': MATERIAIS,
+        'Disponível (m)': DISPONIBILIDADE_INICIAL,
+        'Consumo (m)': consumo_total,
+        'Restante (m)': disponibilidade_restante,
+        'Status': status_recursos
+    })
+    st.dataframe(df_analise, use_container_width=True, hide_index=True)
 
-with col5:
+with col4:
     st.markdown("**Resumo Financeiro**")
     st.metric("Receita Atual", f"{receita_atual:.2f} u.m.", delta=None)
     
