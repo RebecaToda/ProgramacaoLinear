@@ -51,9 +51,10 @@ st.markdown("""
     
     .success-box {
         background-color: #1a4a1a;
-        padding: 1rem;
+        padding: 1rem 2rem;
         border-radius: 10px;
         margin: 1rem 0;
+        width: fit-content;
     }
     
     .info-box {
