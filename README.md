@@ -1,17 +1,14 @@
-# Sistema de Otimização de Produção - Fábrica de Móveis
-
-Aplicação web desenvolvida em Streamlit para otimização de produção de móveis usando programação linear.
 
 ## Como executar
 
 1. Instale as dependências:
 ```bash
-pip install streamlit numpy pandas scipy
+python -m pip install streamlit numpy pandas scipy
 ```
 
 2. Execute a aplicação:
 ```bash
-streamlit run app.py --server.port 5000
+python -m streamlit run app.py --server.port 8501 --server.address 127.0.0.1
 ```
 
 ## Funcionalidades
@@ -34,6 +31,3 @@ streamlit run app.py --server.port 5000
 - Tábuas
 - Pranchas  
 - Painéis
-
----
-Desenvolvido por FATEC Ourinhos
