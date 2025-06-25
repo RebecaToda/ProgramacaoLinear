@@ -344,7 +344,7 @@ if resultado.success:
     col8, col9, col10 = st.columns(3)
     
     with col8:
-        st.markdown("**Configuração Atual**")
+        st.markdown('<p class="subsection-title">Configuração Atual</p>', unsafe_allow_html=True)
         df_atual = pd.DataFrame({
             'Produto': PRODUTOS,
             'Quantidade': quantidades,
@@ -354,7 +354,7 @@ if resultado.success:
         st.metric("Receita Total", f"{receita_atual:.2f} u.m.")
     
     with col9:
-        st.markdown("**Configuração Ótima**")
+        st.markdown('<p class="subsection-title">Configuração Ótima</p>', unsafe_allow_html=True)
         solucao_otima = resultado.x
         solucao_otima_int_display = np.floor(solucao_otima).astype(int)
         df_otima = pd.DataFrame({
@@ -372,7 +372,7 @@ if resultado.success:
             st.metric("Ganho Potencial", f"+{diferenca:.2f} u.m.", delta=f"+{((diferenca/receita_atual)*100):.1f}%" if receita_atual > 0 else None)
     
     with col10:
-        st.markdown("**Configuração Recomendada**")
+        st.markdown('<p class="subsection-title">Configuração Recomendada</p>', unsafe_allow_html=True)
         if resultado_recomendado.success:
             solucao_recomendada = resultado_recomendado.x
             solucao_recomendada_int = np.floor(solucao_recomendada).astype(int)
