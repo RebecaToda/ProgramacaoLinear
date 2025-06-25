@@ -83,20 +83,43 @@ CONSUMO_MATRIZ = np.array([
 ])
 
 # Disponibilidade inicial de recursos (metros)
-DISPONIBILIDADE_INICIAL = np.array([250, 600, 500])  # Tábua, Prancha, Painéis
+DISPONIBILIDADE_INICIAL_DEFAULT = np.array([250, 600, 500])  # Tábua, Prancha, Painéis
 
-# Preços de venda (FIXOS)
-PRECOS = np.array([100, 80, 120, 20])  # Escrivaninha, Mesa, Armário, Prateleira
+# Preços de venda (padrão)
+PRECOS_DEFAULT = np.array([100, 80, 120, 20])  # Escrivaninha, Mesa, Armário, Prateleira
 
 # Inicializar session state
 if 'quantidades' not in st.session_state:
     st.session_state.quantidades = [0, 0, 0, 0]
+
+if 'disponibilidade' not in st.session_state:
+    st.session_state.disponibilidade = DISPONIBILIDADE_INICIAL_DEFAULT.copy()
+
+if 'precos' not in st.session_state:
+    st.session_state.precos = PRECOS_DEFAULT.copy()
+
+if 'modo_edicao' not in st.session_state:
+    st.session_state.modo_edicao = False
+
+# Usar valores do session state
+DISPONIBILIDADE_INICIAL = st.session_state.disponibilidade
+PRECOS = st.session_state.precos
 
 # Layout em colunas
 col1, col2 = st.columns([1, 1])
 
 with col1:
     st.markdown('<div class="section-header">📋 Entrada de Dados</div>', unsafe_allow_html=True)
+    
+    # Botão para alternar modo de edição
+    if not st.session_state.modo_edicao:
+        if st.button("⚙️ Editar Parâmetros", use_container_width=True):
+            st.session_state.modo_edicao = True
+            st.rerun()
+    else:
+        if st.button("✅ Confirmar Alterações", use_container_width=True):
+            st.session_state.modo_edicao = False
+            st.rerun()
     
     # Exibir matriz de consumo fixa
     st.markdown("**Matriz de Consumo de Materiais (Fixa)**")
@@ -108,19 +131,51 @@ with col1:
     df_consumo = df_consumo.astype(str) + "m"
     st.dataframe(df_consumo, use_container_width=True)
     
-    st.markdown("**Preços de Venda (Fixos)**")
-    df_precos = pd.DataFrame({
-        'Produto': PRODUTOS,
-        'Preço (u.m.)': PRECOS
-    })
-    st.dataframe(df_precos, use_container_width=True, hide_index=True)
+    # Preços de venda - editáveis quando em modo de edição
+    st.markdown("**Preços de Venda**")
+    if st.session_state.modo_edicao:
+        st.markdown("*Editando preços de venda:*")
+        precos_temp = []
+        for i, produto in enumerate(PRODUTOS):
+            preco = st.number_input(
+                f"Preço {produto} (u.m.)",
+                min_value=0.0,
+                value=float(st.session_state.precos[i]),
+                step=1.0,
+                key=f"preco_{i}"
+            )
+            precos_temp.append(preco)
+        st.session_state.precos = np.array(precos_temp)
+        PRECOS = st.session_state.precos
+    else:
+        df_precos = pd.DataFrame({
+            'Produto': PRODUTOS,
+            'Preço (u.m.)': PRECOS
+        })
+        st.dataframe(df_precos, use_container_width=True, hide_index=True)
     
+    # Disponibilidade de recursos - editável quando em modo de edição
     st.markdown("**Disponibilidade de Recursos**")
-    df_disponibilidade = pd.DataFrame({
-        'Recurso': MATERIAIS,
-        'Disponibilidade (metros)': DISPONIBILIDADE_INICIAL
-    })
-    st.dataframe(df_disponibilidade, use_container_width=True, hide_index=True)
+    if st.session_state.modo_edicao:
+        st.markdown("*Editando disponibilidade de recursos:*")
+        disponibilidade_temp = []
+        for i, material in enumerate(MATERIAIS):
+            disponibilidade = st.number_input(
+                f"Disponibilidade {material} (m)",
+                min_value=0,
+                value=int(st.session_state.disponibilidade[i]),
+                step=1,
+                key=f"disp_{i}"
+            )
+            disponibilidade_temp.append(disponibilidade)
+        st.session_state.disponibilidade = np.array(disponibilidade_temp)
+        DISPONIBILIDADE_INICIAL = st.session_state.disponibilidade
+    else:
+        df_disponibilidade = pd.DataFrame({
+            'Recurso': MATERIAIS,
+            'Disponibilidade (metros)': DISPONIBILIDADE_INICIAL
+        })
+        st.dataframe(df_disponibilidade, use_container_width=True, hide_index=True)
 
 with col2:
     st.markdown('<div class="section-header">🔧 Quantidades de Produção</div>', unsafe_allow_html=True)
@@ -292,7 +347,7 @@ st.markdown("---")
 st.markdown(
     '<div style="text-align: center; color: #888888; margin-top: 2rem;">'
     '🏭 Sistema de Otimização de Produção - Programação Linear<br>'
-    'Desenvolvido para maximização de receita com restrições de recursos'
+    'Desenvolvido por FATEC Ourinhos'
     '</div>', 
     unsafe_allow_html=True
 )
